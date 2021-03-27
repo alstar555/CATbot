@@ -7,25 +7,29 @@ A demo of CAT can be seen by joining this server: https://discord.gg/fmUTnXYF CA
 
 
 # CatBot2
-CAT bot2 is an updated version of the cat bot. It has extra features and is a less simple version of cat bot.
+CAT bot2 is an updated version of the cat bot. It has extra features such as lives, feeding, grooming, and sleeping
 
 
 
 # Features
-*meows
-*replies to keywords
-*responds to commands
+* meows
+
+* replies to keywords
+
+* responds to commands
 
 
 cat must be taken care of in order for him not to loose his 9 lives
 
-*!feed - cat must be fed every 30 min
+* !feed - cat must be fed every 30 min
 
-*!groom - cat must be groomed every hour
+* !groom - cat must be groomed every hour
 
-*!sleep - cat must sleep every 5 hours
+* !sleep - cat must sleep every 5 hours
 
-*!help - help command to see description of all commands
+* !help - help command to see description of all commands
+
+
 
 # Use
 You need to create a discord account to run this bot and create a discord server to place the bot in.
