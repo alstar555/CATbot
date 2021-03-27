@@ -19,7 +19,6 @@ bot = commands.Bot(command_prefix = "!")
 
 
 
-
 if __name__ == "__main__":
 
     bot.time = time.time()
@@ -37,10 +36,10 @@ if __name__ == "__main__":
         await bot.process_commands(message)
 
     bot.feeling = ":)"
-    bot.eat = 10
-    bot.groom = 10
-    bot.sleep = 10
-    bot.representation = "+"
+    bot.eat = 9
+    bot.groom = 9
+    bot.sleep = 9
+    bot.representation = " ♡ "
 
 
     #commands
@@ -49,19 +48,19 @@ if __name__ == "__main__":
         duration = time.time() - bot.time
         print(duration)
         #feed every 30 min
-        bot.eat -= duration // 60
+        bot.eat -= int(duration // 60)
         #bot.eat -= duration//1800
         bot.time = time.time()
         #groom every hour
-        bot.groom -= duration//36000
+        bot.groom -= int(duration//36000)
         #sleep every 5 hours
-        bot.sleep -=  duration//180000
+        bot.sleep -=  int(duration//180000)
         if duration > 180000:
             bot.time = time.time()
 
         bot.energy = "feeling:         "
         totalEnergy = bot.eat+ bot.groom + bot.sleep
-        if totalEnergy ==0:
+        if totalEnergy == 0:
             bot.energy += "dead"
         elif totalEnergy > 24:
             bot.energy += ":)"
