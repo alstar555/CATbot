@@ -2,6 +2,7 @@
 
 CAT is a customizable bot for the discord platform. 
 When added to a server, CAT will meow every x amount of messages. He will also chime into the conversation when triggered by certain key words.
+It also has extra features such as lives, feeding, grooming, and sleeping. He can be trained to relpy to custom phrases with the !train command.
 
 A demo of CAT can be seen by joining this server: 
 https://discord.gg/fmUTnXYF
@@ -11,9 +12,6 @@ note that CAT does not run 24/7
 Add Cat bot to your server with this link:
 https://discord.com/api/oauth2/authorize?client_id=824824038228099103&permissions=1513483888&scope=bot 
 
-
-# CatBot2
-CAT bot2 is an updated version of the cat bot. It has extra features such as lives, feeding, grooming, and sleeping. He can also be train custom phrases with the !train command.
 
 
 
