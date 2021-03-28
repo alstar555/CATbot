@@ -224,15 +224,32 @@ if __name__ == "__main__":
         await ctx.voice_client.disconnect()
 
 
+    queue = []
+
     #play
     @bot.command(name='play', help=':: play a song wih url')
-    async def play_url(ctx, url="https://www.youtube.com/watch?v=P9AY5rc5M28"):
+    async def play_url(ctx, *args):
+        if len(args) == 0 and len(queue) == 0:
+            url = "https://www.youtube.com/watch?v=P9AY5rc5M28"
+        elif len(args) == 0:
+            url = queue[0]
+        else:
+            url = args[0]
+        queue.append(url)
+        url = queue[0]
         server = ctx.message.guild
         voice_channel = server.voice_client
-
         async with ctx.typing():
             filename = await YTDLSource.from_url(url, loop=bot.loop)
-            voice_channel.play(discord.FFmp egPCMAudio(executable="C:/Program Files/FFmpeg/bin/ffmpeg.exe", source = filename))
+            voice_channel.play(discord.FFmpegPCMAudio(executable="C:/Program Files/FFmpeg/bin/ffmpeg.exe", source=filename))
+        del queue[0]
+
+
+    @bot.command(name='next', help=':: add next song to queue')
+    async def add_queue(ctx, url="https://www.youtube.com/watch?v=P9AY5rc5M28"):
+        queue.append(url)
+        await ctx.channel.send("added to queue")
+
 
 
     @bot.command(name='stop', help=':: stops the song')
@@ -240,6 +257,8 @@ if __name__ == "__main__":
         voice_client = ctx.message.guild.voice_client
         if voice_client.is_playing():
             await voice_client.stop()
+
+
 
     #events
     @bot.event
