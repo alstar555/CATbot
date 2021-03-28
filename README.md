@@ -1,6 +1,6 @@
 # CatBot 
 
-CAT is a bot for the discord platform. 
+CAT is a customizable bot for the discord platform. 
 When added to a server, CAT will meow every x amount of messages. He will also chime into the conversation when triggered by certain key words.
 
 A demo of CAT can be seen by joining this server: https://discord.gg/fmUTnXYF CAT does not run 24/7
@@ -29,8 +29,10 @@ cat must be taken care of in order for him not to loose his 9 lives
 |  !help | help command to see description of all commands  |
 
 
-# Requiremen 
-* Python
+# Requirements 
+* Python 
+* Dsicord.py library
+* PyNaCl library
 
 # Set Up
 You need to create a discord account to run this bot and create a discord server to place the bot in.
