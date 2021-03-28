@@ -20,20 +20,19 @@ CAT bot2 is an updated version of the cat bot. It has extra features such as liv
 
 
 cat must be taken care of in order for him not to loose his 9 lives
-
-* !feed - cat must be fed every 30 min
-
-* !groom - cat must be groomed every hour
-
-* !sleep - cat must sleep every 5 hours
-
-* !train - train cat new phrases, ex: !train good_bye = meow,_see_ya
-
-* !help - help command to see description of all commands
+| Command | Description |
+| ------------- | ----- |
+|  !train       | train cat new phrases, ex: !train good_bye = meow,_see_ya  |
+|  !feed |  cat must be fed every 30 min  |
+|  !groom |  cat must be groomed every hour  |
+|  !sleep | cat must sleep every 5 hours  |
+|  !help | help command to see description of all commands  |
 
 
+# Requiremen 
+* Python
 
-# Use
+# Set Up
 You need to create a discord account to run this bot and create a discord server to place the bot in.
 
 In the discord developer portal, create a new application and add the bot to your server
