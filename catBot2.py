@@ -3,11 +3,13 @@ from discord.ext.commands import Bot
 from discord.ext import commands
 import random
 from datetime import datetime
+from discord import Intents
+intents = Intents.all()
 import time
 
 
 if not os.path.isfile("config.py"):
-	sys.exit("'config.py' not found! Please add it and try again.")
+	sys.exit("'config.py' not fvirtualenv venvound! Please add it and try again.")
 else:
 	import config
 
@@ -33,6 +35,11 @@ if __name__ == "__main__":
 
     bot.time = time.time()
     bot.count = 0
+    bot.feeling = ":)"
+    bot.eat = 9
+    bot.groom = 9
+    bot.sleep = 9
+    bot.representation = " ♡ "
 
     @bot.event
     async def on_ready():
@@ -45,11 +52,6 @@ if __name__ == "__main__":
             return
         await bot.process_commands(message)
 
-    bot.feeling = ":)"
-    bot.eat = 9
-    bot.groom = 9
-    bot.sleep = 9
-    bot.representation = " ♡ "
     #commands
     @bot.command(name='energy', help=":: displays cat's energy levels")
     async def energy(ctx):
@@ -57,21 +59,21 @@ if __name__ == "__main__":
         bot.eat = max(0, bot.eat)
         bot.groom = max(0, bot.groom)
         bot.sleep = max(0, bot.sleep)
-
+        print("eat2:", bot.eat)
         totalEnergy = bot.eat + bot.groom + bot.sleep
         duration = time.time() - bot.time
         print(duration)
         if totalEnergy > 0:
             #feed every 30 min
             if bot.eat > 0:
-                bot.eat -= int(duration // 60)
+                bot.eat -= int(duration // 10)
                 #bot.eat -= duration//1800
             #groom every hour
             if bot.groom > 0:
-                bot.groom -= int(duration//360)
+                bot.groom -= int(duration//15)
             #sleep every 5 hours
             if bot.sleep > 0:
-                bot.sleep -= int(duration//1800)
+                bot.sleep -= int(duration//25)
             bot.time = time.time()
 
         bot.energy = "feeling:         "
@@ -91,7 +93,14 @@ if __name__ == "__main__":
         bot.energy += "\nsleep:   "
         bot.energy += bot.sleep * bot.representation
 
-        await ctx.send(bot.energy)
+
+        #colors gradually change based on lives
+        color_code = 0xA6E516
+        for x in range(27-totalEnergy):
+            color_code -= 1000
+        embedVar = discord.Embed(title=bot.energy, color = color_code)
+        await ctx.send(embed=embedVar)
+
 
     @bot.command(name='feed', help=':: you must feed the cat')
     async def feed(ctx):
@@ -99,6 +108,7 @@ if __name__ == "__main__":
             await ctx.send("not hungry :p")
         else:
             bot.eat += 1
+            print("eat:", bot.eat)
             await ctx.send("nom nom")
 
     @bot.command(name='groom', help=':: you must groom the cat')
@@ -107,6 +117,7 @@ if __name__ == "__main__":
             await ctx.send("no! stop :p")
         else:
             bot.groom += 1
+            print("groom:", bot.groom)
             await ctx.send("purr")
 
     @bot.command(name='sleep', help=':: you must sleep the cat')
@@ -115,6 +126,7 @@ if __name__ == "__main__":
             await ctx.send("not gonna sleep :p")
         else:
             bot.sleep += 1
+            print("sleep:", bot.sleep)
             await ctx.send("Zzz")
 
 
@@ -130,7 +142,15 @@ if __name__ == "__main__":
             new_val = new_val.replace("_", " ")
             key_words[new_key] = new_val
 
+    #joins cat to voice
+    @bot.command(name = "join")
+    async def join(ctx):
+        channel = ctx.author.voice.channel
+        await channel.connect()
 
+    @bot.command(name="leave")
+    async def leave(ctx):
+        await ctx.voice_client.disconnect()
 
 
     #events
