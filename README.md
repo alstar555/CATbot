@@ -7,7 +7,7 @@ A demo of CAT can be seen by joining this server: https://discord.gg/fmUTnXYF CA
 
 
 # CatBot2
-CAT bot2 is an updated version of the cat bot. It has extra features such as lives, feeding, grooming, and sleeping
+CAT bot2 is an updated version of the cat bot. It has extra features such as lives, feeding, grooming, and sleeping. He can also be train custom phrases with the !train command.
 
 
 
@@ -26,6 +26,8 @@ cat must be taken care of in order for him not to loose his 9 lives
 * !groom - cat must be groomed every hour
 
 * !sleep - cat must sleep every 5 hours
+
+* !train - train cat new phrases, ex: !train good_bye = meow,_see_ya
 
 * !help - help command to see description of all commands
 
