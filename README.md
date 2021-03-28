@@ -37,6 +37,8 @@ cat must be taken care of in order for him not to loose his 9 lives
 * PyNaCl library
 
 # Set Up
+If you want to clone this repo and host the bot yourself:
+
 You need to create a discord account to run this bot and create a discord server to place the bot in.
 
 In the discord developer portal, create a new application and add the bot to your server
@@ -57,4 +59,13 @@ prefix = "!"
 
 Run the program and the bot should appear in your server!
 
+
+#ToDO
+
+updates/ideas in development:
+
+* meow in server
+* music cat bot
+* roles
+* name cat
 
