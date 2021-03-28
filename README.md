@@ -3,6 +3,7 @@
 CAT is a customizable bot for the discord platform. 
 When added to a server, CAT will meow every x amount of messages. He will also chime into the conversation when triggered by certain key words.
 It also has extra features such as lives, feeding, grooming, and sleeping. He can be trained to relpy to custom phrases with the !train command.
+Can also act as music bot.
 
 A demo of CAT can be seen by joining this server: 
 https://discord.gg/fmUTnXYF
@@ -22,6 +23,8 @@ https://discord.com/api/oauth2/authorize?client_id=824824038228099103&permission
 
 * responds to commands
 
+* plays music and meow in voice channel
+
 
 cat must be taken care of in order for him not to loose his 9 lives
 | Command | Description |
@@ -30,6 +33,7 @@ cat must be taken care of in order for him not to loose his 9 lives
 |  !feed |  cat must be fed every 30 min  |
 |  !groom |  cat must be groomed every hour  |
 |  !sleep | cat must sleep every 5 hours  |
+| !play   | plays song from youtube url
 |  !help | help command to see description of all commands  |
 
 
