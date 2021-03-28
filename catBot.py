@@ -1,11 +1,13 @@
 import discord, asyncio, os, platform, sys
 from discord.ext.commands import Bot
 from discord.ext import commands
+import youtube_dl
+
+import time
 import random
 from datetime import datetime
-from discord import Intents
-intents = Intents.all()
-import time
+import os
+
 
 
 if not os.path.isfile("config.py"):
@@ -15,7 +17,8 @@ else:
 
 TOKEN = config.TOKEN
 GUILD = config.GUILD
-bot = commands.Bot(command_prefix = "!")
+bot = commands.Bot(command_prefix = config.prefix)
+
 
 
 
@@ -32,6 +35,14 @@ if __name__ == "__main__":
                  "cat": "that's me!",
                  "meow": "meow"
                  }
+    #open existing or make new text file to store key words
+    with open('keyWords.txt', "r") as keyWords_file:
+        for line in keyWords_file:
+            word = line.split("=")
+            key = word[0]
+            val = word[1]
+            key_words[key] = val
+
 
     bot.time = time.time()
     bot.count = 0
@@ -55,29 +66,31 @@ if __name__ == "__main__":
     #commands
     @bot.command(name='energy', help=":: displays cat's energy levels")
     async def energy(ctx):
+        duration = time.time() - bot.time
+        print(duration)
+        #feed every 30 min
+        if bot.eat > 0:
+            bot.eat -= int(duration // 10)
+            #bot.eat -= duration//1800
+        #groom every hour
+        if bot.groom > 0:
+            bot.groom -= int(duration//15)
+        #sleep every 5 hours
+        if bot.sleep > 0:
+            bot.sleep -= int(duration//25)
+        bot.time = time.time()
+
         # stays in bounds
         bot.eat = max(0, bot.eat)
         bot.groom = max(0, bot.groom)
         bot.sleep = max(0, bot.sleep)
-        print("eat2:", bot.eat)
         totalEnergy = bot.eat + bot.groom + bot.sleep
-        duration = time.time() - bot.time
-        print(duration)
-        if totalEnergy > 0:
-            #feed every 30 min
-            if bot.eat > 0:
-                bot.eat -= int(duration // 10)
-                #bot.eat -= duration//1800
-            #groom every hour
-            if bot.groom > 0:
-                bot.groom -= int(duration//15)
-            #sleep every 5 hours
-            if bot.sleep > 0:
-                bot.sleep -= int(duration//25)
-            bot.time = time.time()
+        print("totalEnergy: ", totalEnergy)
+        print("eat:", bot.eat)
+        print("groom:", bot.groom)
+        print("sleep:", bot.sleep)
 
         bot.energy = "feeling:         "
-        print("totalEnergy: ", totalEnergy)
         if totalEnergy <= 0:
             bot.energy += "dead"
         elif totalEnergy > 24:
@@ -108,6 +121,7 @@ if __name__ == "__main__":
             await ctx.send("not hungry :p")
         else:
             bot.eat += 1
+            bot.eat = max(0, bot.eat)
             print("eat:", bot.eat)
             await ctx.send("nom nom")
 
@@ -117,6 +131,7 @@ if __name__ == "__main__":
             await ctx.send("no! stop :p")
         else:
             bot.groom += 1
+            bot.eat = max(0, bot.groom)
             print("groom:", bot.groom)
             await ctx.send("purr")
 
@@ -126,32 +141,105 @@ if __name__ == "__main__":
             await ctx.send("not gonna sleep :p")
         else:
             bot.sleep += 1
+            bot.eat = max(0, bot.sleep)
             print("sleep:", bot.sleep)
             await ctx.send("Zzz")
 
 
-    @bot.command(name='train', help=':: train cat new phrases, ex: !train good_bye = meow,_see_ya')
-    async def train(ctx, command="none"):
-        if command == "none":
+    @bot.command(name='train', help=':: train cat new phrases, ex: !train good bye = meow, see ya! :)')
+    async def train(ctx, *args):
+        if len(args) == 0:
             await ctx.send("meow?")
         else:
+            command = " ".join(args)
             i = command.index("=")
             new_key = command[:i]
-            new_key = new_key.replace("_", " ")
-            new_val = command[i+1:]
-            new_val = new_val.replace("_", " ")
-            key_words[new_key] = new_val
+            new_key = new_key.strip()
+            new_val = command[i + 1:]
+            new_val = new_val.strip()
+            try:
+                key_words[new_key] = new_val
+            except:  # catch *all* exceptions
+                return
+            # add key word to a text file to save trained phrases even after bot stops running
+            keyWords_file = open('keyWords.txt', "a")
+            keyWords_file.write("\n")
+            keyWords_file.write(new_key + "=" + new_val)
+            keyWords_file.close()
 
-    #joins cat to voice
-    @bot.command(name = "join")
+
+
+
+    #for playing audio from youtube
+    youtube_dl.utils.bug_reports_message = lambda: ''
+
+    ytdl_format_options = {
+        'format': 'bestaudio/best',
+        'restrictfilenames': True,
+        'noplaylist': True,
+        'nocheckcertificate': True,
+        'ignoreerrors': False,
+        'logtostderr': False,
+        'quiet': True,
+        'no_warnings': True,
+        'default_search': 'auto',
+        'source_address': '0.0.0.0'  # bind to ipv4 since ipv6 addresses cause issues sometimes
+    }
+
+    ffmpeg_options = {
+        'options': '-vn'
+    }
+
+    ytdl = youtube_dl.YoutubeDL(ytdl_format_options)
+
+
+    class YTDLSource(discord.PCMVolumeTransformer):
+        def __init__(self, source, *, data, volume=0.5):
+            super().__init__(source, volume)
+            self.data = data
+            self.title = data.get('title')
+            self.url = ""
+
+        @classmethod
+        async def from_url(cls, url, *, loop=None, stream=False):
+            loop = loop or asyncio.get_event_loop()
+            data = await loop.run_in_executor(None, lambda: ytdl.extract_info(url, download=not stream))
+            if 'entries' in data:
+                # take first item from a playlist
+                data = data['entries'][0]
+            filename = data['title'] if stream else ytdl.prepare_filename(data)
+            return filename
+
+
+
+    # joins cat to voice
+    @bot.command(name="join", help=":: call cat to join voice")
     async def join(ctx):
         channel = ctx.author.voice.channel
         await channel.connect()
 
-    @bot.command(name="leave")
+
+    @bot.command(name="leave", help=":: force cat out of voice")
     async def leave(ctx):
         await ctx.voice_client.disconnect()
 
+
+    #play
+    @bot.command(name='play', help=':: play a song wih url')
+    async def play_url(ctx, url="https://www.youtube.com/watch?v=P9AY5rc5M28"):
+        server = ctx.message.guild
+        voice_channel = server.voice_client
+
+        async with ctx.typing():
+            filename = await YTDLSource.from_url(url, loop=bot.loop)
+            voice_channel.play(discord.FFmp egPCMAudio(executable="C:/Program Files/FFmpeg/bin/ffmpeg.exe", source = filename))
+
+
+    @bot.command(name='stop', help=':: stops the song')
+    async def stop(ctx):
+        voice_client = ctx.message.guild.voice_client
+        if voice_client.is_playing():
+            await voice_client.stop()
 
     #events
     @bot.event
@@ -189,3 +277,6 @@ if __name__ == "__main__":
 
     #run bot
     bot.run(TOKEN)
+
+    # close text file
+    keyWords_file.close()
