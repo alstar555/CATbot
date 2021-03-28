@@ -20,6 +20,16 @@ bot = commands.Bot(command_prefix = "!")
 
 
 if __name__ == "__main__":
+    #dictionary of key words, has some default phrases, and more can be added with !train
+    key_words = {"hello": "meeeellow",
+                 "ang": "Angelica is my owner i must obey her",
+                 "night": "meow sweet dreams",
+                 "morning": "meowwwringing",
+                 "ring ring": "meow? hello??",
+                 "birth": "meow meow meow meow to u!",
+                 "cat": "that's me!",
+                 "meow": "meow"
+                 }
 
     bot.time = time.time()
     bot.count = 0
@@ -40,27 +50,33 @@ if __name__ == "__main__":
     bot.groom = 9
     bot.sleep = 9
     bot.representation = " ♡ "
-
-
     #commands
     @bot.command(name='energy', help=":: displays cat's energy levels")
     async def energy(ctx):
+        # stays in bounds
+        bot.eat = max(0, bot.eat)
+        bot.groom = max(0, bot.groom)
+        bot.sleep = max(0, bot.sleep)
+
+        totalEnergy = bot.eat + bot.groom + bot.sleep
         duration = time.time() - bot.time
         print(duration)
-        #feed every 30 min
-        bot.eat -= int(duration // 60)
-        #bot.eat -= duration//1800
-        bot.time = time.time()
-        #groom every hour
-        bot.groom -= int(duration//36000)
-        #sleep every 5 hours
-        bot.sleep -=  int(duration//180000)
-        if duration > 180000:
+        if totalEnergy > 0:
+            #feed every 30 min
+            if bot.eat > 0:
+                bot.eat -= int(duration // 60)
+                #bot.eat -= duration//1800
+            #groom every hour
+            if bot.groom > 0:
+                bot.groom -= int(duration//360)
+            #sleep every 5 hours
+            if bot.sleep > 0:
+                bot.sleep -= int(duration//1800)
             bot.time = time.time()
 
         bot.energy = "feeling:         "
-        totalEnergy = bot.eat+ bot.groom + bot.sleep
-        if totalEnergy == 0:
+        print("totalEnergy: ", totalEnergy)
+        if totalEnergy <= 0:
             bot.energy += "dead"
         elif totalEnergy > 24:
             bot.energy += ":)"
@@ -79,7 +95,7 @@ if __name__ == "__main__":
 
     @bot.command(name='feed', help=':: you must feed the cat')
     async def feed(ctx):
-        if bot.eat == 10:
+        if bot.eat == 9:
             await ctx.send("not hungry :p")
         else:
             bot.eat += 1
@@ -87,7 +103,7 @@ if __name__ == "__main__":
 
     @bot.command(name='groom', help=':: you must groom the cat')
     async def groom(ctx):
-        if bot.groom == 10:
+        if bot.groom == 9:
             await ctx.send("no! stop :p")
         else:
             bot.groom += 1
@@ -95,11 +111,24 @@ if __name__ == "__main__":
 
     @bot.command(name='sleep', help=':: you must sleep the cat')
     async def sleep(ctx):
-        if bot.sleep == 10:
+        if bot.sleep == 9:
             await ctx.send("not gonna sleep :p")
         else:
             bot.sleep += 1
             await ctx.send("Zzz")
+
+
+    @bot.command(name='train', help=':: train cat new phrases, ex: !train good_bye = meow,_see_ya')
+    async def train(ctx, command="none"):
+        if command == "none":
+            await ctx.send("meow?")
+        else:
+            i = command.index("=")
+            new_key = command[:i]
+            new_key = new_key.replace("_", " ")
+            new_val = command[i+1:]
+            new_val = new_val.replace("_", " ")
+            key_words[new_key] = new_val
 
 
 
@@ -120,19 +149,14 @@ if __name__ == "__main__":
             bot.count += 1
 
         # respond to keywords
-        if "ang" in message.content:
-            await message.channel.send("angelica is my owner i obey her")
-        elif "copy" in message.content:
+        for key in key_words:
+            if key in message.content:
+                await message.channel.send(key_words[key])
+        if "copy" in message.content:
             await message.channel.send(message.content)
-        elif "night" in message.content:
-            await message.channel.send("meow sweet dreams")
-        elif "birthday" in message.content:
-            await message.channel.send("meow meow meow meow to u!")
-        elif "meow" in message.content:
-            meows = randomNum * "meow "
-            await message.channel.send(meows)
-        elif "cat" in message.content:
-            await message.channel.send("that's me!")
+
+
+        #randomly chimes into convo
         elif bot.count % 60 == 0:
             await message.channel.send("meow pay attention to me")
         elif bot.count % 100 == 0:
