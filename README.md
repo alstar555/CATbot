@@ -5,12 +5,12 @@ When added to a server, CAT will meow every x amount of messages. He will also c
 It also has extra features such as lives, feeding, grooming, and sleeping. He can be trained to relpy to custom phrases with the !train command.
 Can also act as music bot.
 
-A demo of CAT can be seen by joining this server: 
+A demo of CAT can be seen by joining this discord server: 
 https://discord.gg/fmUTnXYF
 
 note that CAT does not run 24/7
 
-Add Cat bot to your server with this link:
+Add Cat bot to your own discord server with this link:
 https://discord.com/api/oauth2/authorize?client_id=824824038228099103&permissions=1513483888&scope=bot 
 
 
@@ -49,8 +49,6 @@ You need to create a discord account to run this bot and create a discord server
 
 In the discord developer portal, create a new application and add the bot to your server
 
-https://discord.com/login?redirect_to=%2Fdevelopers%2Fapplications
-
 Run this python code in a ide such as pycharm.
 
 In the config.py section, add your bot's token code, your server's guild code, and the prefix to command the bot.
@@ -69,9 +67,8 @@ Run the program and the bot should appear in your server!
 # ToDO
 
 updates/ideas in development:
-
-* meow in server
-* music cat bot
+ 
+* music cat bot is in development/ still glitchy
 * roles
 * name cat
 
