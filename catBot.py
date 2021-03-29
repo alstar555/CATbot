@@ -7,6 +7,7 @@ import time
 import random
 from datetime import datetime
 import os
+import asyncio
 
 
 
@@ -32,7 +33,6 @@ if __name__ == "__main__":
                  "morning": "meowwwringing",
                  "ring ring": "meow? hello??",
                  "birth": "meow meow meow meow to u!",
-                 "cat": "that's me!",
                  "meow": "meow"
                  }
     #open existing or make new text file to store key words
@@ -55,6 +55,7 @@ if __name__ == "__main__":
     @bot.event
     async def on_ready():
         print(f'{bot.user.name} has connected to Discord!')
+
 
     @bot.event
     async def on_message(message):
@@ -90,7 +91,9 @@ if __name__ == "__main__":
         print("groom:", bot.groom)
         print("sleep:", bot.sleep)
 
-        bot.energy = "feeling:         "
+
+        bot.energy = "DR.  CAT\t\t\t\t\t\t\t\t/ᐠ ̥  ̮  ̥ ᐟ\ ฅ \n\n"
+        bot.energy += "feeling:         "
         if totalEnergy <= 0:
             bot.energy += "dead"
         elif totalEnergy > 24:
@@ -107,11 +110,12 @@ if __name__ == "__main__":
         bot.energy += bot.sleep * bot.representation
 
 
+
         #colors gradually change based on lives
         color_code = 0xA6E516
         for x in range(27-totalEnergy):
             color_code -= 1000
-        embedVar = discord.Embed(title=bot.energy, color = color_code)
+        embedVar = discord.Embed(title= bot.energy, color = color_code)
         await ctx.send(embed=embedVar)
 
 
@@ -224,31 +228,63 @@ if __name__ == "__main__":
         await ctx.voice_client.disconnect()
 
 
-    queue = []
-
-    #play
-    @bot.command(name='play', help=':: play a song wih url')
-    async def play_url(ctx, *args):
-        if len(args) == 0 and len(queue) == 0:
-            url = "https://www.youtube.com/watch?v=P9AY5rc5M28"
-        elif len(args) == 0:
-            url = queue[0]
-        else:
-            url = args[0]
-        queue.append(url)
-        url = queue[0]
-        server = ctx.message.guild
-        voice_channel = server.voice_client
-        async with ctx.typing():
-            filename = await YTDLSource.from_url(url, loop=bot.loop)
-            voice_channel.play(discord.FFmpegPCMAudio(executable="C:/Program Files/FFmpeg/bin/ffmpeg.exe", source=filename))
-        del queue[0]
 
 
-    @bot.command(name='next', help=':: add next song to queue')
-    async def add_queue(ctx, url="https://www.youtube.com/watch?v=P9AY5rc5M28"):
-        queue.append(url)
-        await ctx.channel.send("added to queue")
+        # will be looped to keep music running
+        #songs = asyncio.Queue()
+        #play_next_song = asyncio.Event()
+
+        # async def audio_player_task():
+        #     while True:
+        #         print("waiting")
+        #         voice_client.is_playing()
+        #         await play_next_song.wait()
+        #         # await asyncio.sleep(1)
+        #         print("got it")
+        #         # wait for a song
+        #         # play.clear()
+        #         # current = await songs.get()
+        #         # current.start()
+        #         # await play.wait()
+
+
+
+    queueList = []
+    @bot.command(name='play', help=':: play song')
+    async def play(ctx, url="https://www.youtube.com/watch?v=P9AY5rc5M28"):
+        voice_client = ctx.message.guild.voice_client
+        #add song to queue
+        queueList.append(url)
+        #if something is playing, tell them their place in queue
+        print("is playing: ", voice_client.is_playing())
+        if voice_client.is_playing():
+            songstext = "song "
+            songstext += str(len(queueList))
+            songstext += " in queue"
+            await ctx.channel.send(songstext)
+        # if nothing is playing, then play first song in queue
+        if not voice_client.is_playing():
+            #get first song and remove it from list
+            url = queueList[0]
+            queueList.pop(0)
+            songstext = "num songs in queue: "
+            songstext += str(len(queueList))
+            await ctx.channel.send(songstext)
+            server = ctx.message.guild
+            voice_channel = server.voice_client
+            async with ctx.typing():
+                filename = await YTDLSource.from_url(url, loop=bot.loop)
+                voice_channel.play(discord.FFmpegPCMAudio(executable="C:/Program Files/FFmpeg/bin/ffmpeg.exe", source=filename))
+
+
+
+
+
+    @bot.command(name='clear', help=':: clears queue')
+    async def clear(ctx):
+        queueList.clear()
+        songstext = "queue is empty"
+        await ctx.channel.send(songstext)
 
 
 
@@ -293,6 +329,10 @@ if __name__ == "__main__":
         await bot.process_commands(message)
 
 
+    #loop to keep playing music
+    # bot.loop.create_task(audio_player_task())
+    # loop = asyncio.get_event_loop()
+    # loop.run_until_complete(audio_player_task())
 
     #run bot
     bot.run(TOKEN)
