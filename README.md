@@ -17,10 +17,11 @@ https://discord.com/api/oauth2/authorize?client_id=824824038228099103&permission
 
 
 # Features
+
 * meows
 
 * replies to keywords
-* 
+
 * keywords can be customized with !train command
 
 * responds to commands
