@@ -4,3 +4,7 @@ discord.py[voice]==1.2.5
 pip
 youtube_dl
 discord.py
+datetime
+random
+time
+discord.ext
