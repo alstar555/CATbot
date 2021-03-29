@@ -1,3 +1,3 @@
-TOKEN = "add your bot's token here" 
-GUILD = "add your server's guild here"
+TOKEN = os.getenv("DISCORD_BOT_TOKEN")
+GUILD = os.getenv("DISCORD_GUILD)
 prefix = "!"
