@@ -15,7 +15,7 @@ if not os.path.isfile("config.py"):
 else:
 	import config
 
-TOKEN = config.TOKEN
+TOKEN = os.getenv("DISCORD_BOT_TOKEN")
 GUILD = config.GUILD
 bot = commands.Bot(command_prefix = config.prefix)
 
