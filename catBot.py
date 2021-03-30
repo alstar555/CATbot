@@ -16,7 +16,7 @@ else:
 	import config
 
 TOKEN = os.getenv("DISCORD_BOT_TOKEN")
-GUILD = config.GUILD
+GUILD = os.getenv("DISCORD_GUILD")
 bot = commands.Bot(command_prefix = config.prefix)
 
 
