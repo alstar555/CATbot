@@ -1,4 +1,4 @@
-import discord, asyncio, os, platform, sys
+import discord, os, sys
 from discord.ext import commands
 import youtube_dl
 
@@ -9,11 +9,6 @@ import os
 import asyncio
 
 
-
-if not os.path.isfile("config.py"):
-	sys.exit("'config.py' not fvirtualenv venvound! Please add it and try again.")
-else:
-	import config
 
 TOKEN = os.getenv("DISCORD_BOT_TOKEN")
 GUILD = os.getenv("DISCORD_GUILD")
@@ -227,27 +222,6 @@ if __name__ == "__main__":
         await ctx.voice_client.disconnect()
 
 
-
-
-        # will be looped to keep music running
-        #songs = asyncio.Queue()
-        #play_next_song = asyncio.Event()
-
-        # async def audio_player_task():
-        #     while True:
-        #         print("waiting")
-        #         voice_client.is_playing()
-        #         await play_next_song.wait()
-        #         # await asyncio.sleep(1)
-        #         print("got it")
-        #         # wait for a song
-        #         # play.clear()
-        #         # current = await songs.get()
-        #         # current.start()
-        #         # await play.wait()
-
-
-
     queueList = []
     @bot.command(name='play', help=':: play song')
     async def play(ctx, url="https://www.youtube.com/watch?v=P9AY5rc5M28"):
@@ -274,7 +248,6 @@ if __name__ == "__main__":
             async with ctx.typing():
                 filename = await YTDLSource.from_url(url, loop=bot.loop)
                 voice_channel.play(discord.FFmpegPCMAudio(executable="C:/Program Files/FFmpeg/bin/ffmpeg.exe", source=filename))
-
 
 
 
@@ -316,6 +289,15 @@ if __name__ == "__main__":
                 await message.channel.send(key_words[key])
         if "copy" in message.content:
             await message.channel.send(message.content)
+        if message.content.startswith("im") or message.content.startswith("Im") or message.content.startswith("I'm"):
+            msg = "hi,"
+            if message.content.startswith("I'm"):
+                msg += message.content[3:]
+            else:
+                msg += message.content[2:]
+            msg += ", im dad"
+            await message.channel.send(msg)
+
 
 
         #randomly chimes into convo
@@ -328,10 +310,6 @@ if __name__ == "__main__":
         await bot.process_commands(message)
 
 
-    #loop to keep playing music
-    # bot.loop.create_task(audio_player_task())
-    # loop = asyncio.get_event_loop()
-    # loop.run_until_complete(audio_player_task())
 
     #run bot
     bot.run(TOKEN)
