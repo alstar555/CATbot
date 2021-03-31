@@ -3,4 +3,4 @@ pynacl==1.2.1
 discord.py[voice]==1.2.5
 pip
 youtube_dl
-discord.py
+discord.py==1.2.2
