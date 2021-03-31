@@ -4,4 +4,4 @@ discord.py[voice]==1.2.5
 pip
 youtube_dl
 ffmpeg
-discord.py==1.2.2
+discord.py==1.4.1
