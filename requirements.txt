@@ -1,3 +1,4 @@
+git+https://github.com/alstar555/CatBot
 asyncio
 pynacl==1.2.1
 discord.py[voice]==1.2.5
