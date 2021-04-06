@@ -10,12 +10,12 @@ import os
 import asyncio
 
 
-TOKEN = config.TOKEN
-GUILD = config.GUILD
-bot = commands.Bot(command_prefix = "!")
-# TOKEN = os.getenv("DISCORD_BOT_TOKEN")
-# GUILD = os.getenv("DISCORD_GUILD")
+# TOKEN = config.TOKEN
+# GUILD = config.GUILD
 # bot = commands.Bot(command_prefix = "!")
+TOKEN = os.getenv("DISCORD_BOT_TOKEN")
+GUILD = os.getenv("DISCORD_GUILD")
+bot = commands.Bot(command_prefix = "!")
 
 
 if __name__ == "__main__":
