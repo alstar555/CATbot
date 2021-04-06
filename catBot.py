@@ -8,7 +8,7 @@ import random
 from datetime import datetime
 import os
 import asyncio
-
+print(discord.__version__)
 
 # TOKEN = config.TOKEN
 # GUILD = config.GUILD
@@ -19,7 +19,7 @@ bot = commands.Bot(command_prefix = "!")
 
 
 if __name__ == "__main__":
-
+	
     #dictionary of key words, has some default phrases, and more can be added with !train
     key_words = {"hello": "meeeellow",
                  "night": "meow sweet dreams",
