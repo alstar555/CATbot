@@ -1,4 +1,4 @@
-import discord, os, sys
+import discord, sys
 import os
 from discord.ext import commands
 import youtube_dl
@@ -11,9 +11,17 @@ import asyncio
 
 
 
-TOKEN = os.getenv("DISCORD_BOT_TOKEN")
-GUILD = os.getenv("DISCORD_GUILD")
-bot = commands.Bot(command_prefix = "!")
+if not os.path.isfile("config.py"):
+	sys.exit("'config.py' not fvirtualenv venvound! Please add it and try again.")
+else:
+	import config
+
+TOKEN = config.TOKEN
+GUILD = config.GUILD
+bot = commands.Bot(command_prefix = config.prefix)
+# TOKEN = os.getenv("DISCORD_BOT_TOKEN")
+# GUILD = os.getenv("DISCORD_GUILD")
+# bot = commands.Bot(command_prefix = "!")
 
 
 
@@ -21,22 +29,37 @@ bot = commands.Bot(command_prefix = "!")
 
 
 if __name__ == "__main__":
+
+    delete mp3 that gets downloaded
+    for music_file in os.listdir("./"):
+         if music_file.endswith(".m4a") or music_file.endswith(".webm") or music_file.endswith(".mp3") or music_file.endswith(".mvk") or music_file.endswith(".part"):
+             os.remove(music_file)
+
+
+
     #dictionary of key words, has some default phrases, and more can be added with !train
     key_words = {"hello": "meeeellow",
-                 "ang": "Angelica is my owner i must obey her",
                  "night": "meow sweet dreams",
                  "morning": "meowwwringing",
                  "ring ring": "meow? hello??",
-                 "birth": "meow meow meow meow to u!",
-                 "meow": "meow"
+                 "birthday": "meow meow meow meow to u!",
+                 "meow": "meow",
+                 "high_score": [100, "no_one"]
                  }
     #open existing or make new text file to store key words
     with open('keyWords.txt', "r") as keyWords_file:
         for line in keyWords_file:
             word = line.split("=")
             key = word[0]
-            val = word[1]
-            key_words[key] = val
+            if key == "high_score":
+                val = word[1].split(",")
+                val1 = val[0]
+                val2 = val[1]
+                key_words[key] = [val1, val2]
+            else:
+                val = word[1]
+                key_words[key] = val
+
 
 
     bot.time = time.time()
@@ -63,17 +86,16 @@ if __name__ == "__main__":
     @bot.command(name='energy', help=":: displays cat's energy levels")
     async def energy(ctx):
         duration = time.time() - bot.time
-        print(duration)
         #feed every 30 min
         if bot.eat > 0:
-            bot.eat -= int(duration // 10)
+            bot.eat -= int(duration // 25)
             #bot.eat -= duration//1800
         #groom every hour
         if bot.groom > 0:
-            bot.groom -= int(duration//15)
+            bot.groom -= int(duration//30)
         #sleep every 5 hours
         if bot.sleep > 0:
-            bot.sleep -= int(duration//25)
+            bot.sleep -= int(duration//40)
         bot.time = time.time()
 
         # stays in bounds
@@ -167,6 +189,57 @@ if __name__ == "__main__":
             keyWords_file.close()
 
 
+    bot.fish_game = False
+    bot.rock_pap_sci = False
+    bot.fish_score = 0
+    bot.fish_in_belly = random.randint(0, 100)
+    @bot.command(name='game', help=':: play game with cat')
+    async def game(ctx):
+        #reset
+        bot.fish_game = False
+        bot.rock_pap_sci = False
+
+        game_shuffle = 1
+        if game_shuffle == 1:
+            bot.fish_game = True
+        elif game_shuffle == 2:
+            bot.rock_pap_sci = True
+        bot.fish_score = 0
+
+        if bot.fish_game == True:
+            bot.fish_in_belly = random.randint(0, 100)
+            #print(bot.fish_in_belly) cheat 
+            embedVar = discord.Embed(title="FISHY FISHY", color= 0xD6E556)
+            val ="""
+            
+               :fish: :fish: :fish: :fish: :fish: :fish: :fish: :fish: :fish: :fish:
+               :fish: :fish: :fish: :fish: :fish: :fish: :fish: :fish: :fish: :fish:
+               :fish: :fish: :fish: :fish: :fish: :fish: :fish: :fish: :fish: :fish:
+               :fish: :fish: :fish: :fish: :fish: :fish: :fish: :fish: :fish: :fish:
+               :fish: :fish: :fish: :fish: :fish: :fish: :fish: :fish: :fish: :fish:
+               :fish: :fish: :fish: :fish: :fish: :fish: :fish: :fish: :fish: :fish:
+               :fish: :fish: :fish: :fish: :fish: :fish: :fish: :fish: :fish: :fish:
+               :fish: :fish: :fish: :fish: :fish: :fish: :fish: :fish: :fish: :fish:
+               :fish: :fish: :fish: :fish: :fish: :fish: :fish: :fish: :fish: :fish:
+               
+             """
+            embedVar.add_field(name="guess how many fishy in my tummy", value=val, inline=False)
+            await ctx.send(embed=embedVar)
+
+        elif bot.rock_pap_sci == True:
+            embedVar = discord.Embed(title="HUMAN CAT DOG... SHOOT!", color=0xA6)
+            val = """:gun: 
+
+                :person_doing_cartwheel_tone1: HUMAN beat the dog 
+                :dog2:  DOG beat the cat
+                :black_cat:  CAT beat the human
+                    
+                :gun:  
+                    
+                    """
+            embedVar.add_field(name= val, value = "READY SET GO", inline=False)
+            await ctx.send(embed=embedVar)
+
 
 
     #for playing audio from youtube
@@ -223,27 +296,41 @@ if __name__ == "__main__":
         await ctx.voice_client.disconnect()
 
 
-    queueList = []
+
+
+    bot.queueList = []
     @bot.command(name='play', help=':: play song')
-    async def play(ctx, url="https://www.youtube.com/watch?v=P9AY5rc5M28"):
+    async def play(ctx, *args):
+        if len(args) == 0 and len(bot.queueList) == 0:
+            url = "https://www.youtube.com/watch?v=P9AY5rc5M28"
+            # add cat sounds to queue
+            bot.queueList.append(url)
+        elif len(args) != 0:
+            url = args[0]
+            # add song to queue
+            bot.queueList.append(url)
         voice_client = ctx.message.guild.voice_client
-        #add song to queue
-        queueList.append(url)
         #if something is playing, tell them their place in queue
-        print("is playing: ", voice_client.is_playing())
         if voice_client.is_playing():
-            songstext = "song "
-            songstext += str(len(queueList))
-            songstext += " in queue"
-            await ctx.channel.send(songstext)
+            songstext = ":mushroom:       ~~SONG "
+            songstext += str(len(bot.queueList))
+            songstext += "~~        :no_smoking:"
+            color_code = 0xA6A9
+            color_code += (len(bot.queueList)) * 369
+            embedVar = discord.Embed(title=songstext, color=color_code)
+            await ctx.send(embed=embedVar)
         # if nothing is playing, then play first song in queue
         if not voice_client.is_playing():
             #get first song and remove it from list
-            url = queueList[0]
-            queueList.pop(0)
-            songstext = "num songs in queue: "
-            songstext += str(len(queueList))
-            await ctx.channel.send(songstext)
+            url = bot.queueList[0]
+            bot.queueList.pop(0)
+            songstext = ":mushroom:       ~~SONG "
+            songstext += str(len(bot.queueList))
+            songstext += "~~        :no_smoking:"
+            color_code = 0xA6A9
+            color_code += (len(bot.queueList))*369
+            embedVar = discord.Embed(title=songstext, color=color_code)
+            await ctx.send(embed=embedVar)
             server = ctx.message.guild
             voice_channel = server.voice_client
             async with ctx.typing():
@@ -252,10 +339,9 @@ if __name__ == "__main__":
 
 
 
-
     @bot.command(name='clear', help=':: clears queue')
     async def clear(ctx):
-        queueList.clear()
+        bot.queueList.clear()
         songstext = "queue is empty"
         await ctx.channel.send(songstext)
 
@@ -263,9 +349,11 @@ if __name__ == "__main__":
 
     @bot.command(name='stop', help=':: stops the song')
     async def stop(ctx):
+        await ctx.channel.send("oki i stop")
         voice_client = ctx.message.guild.voice_client
         if voice_client.is_playing():
             await voice_client.stop()
+            # os.remove(bot.song_file)
 
 
 
@@ -290,14 +378,76 @@ if __name__ == "__main__":
                 await message.channel.send(key_words[key])
         if "copy" in message.content:
             await message.channel.send(message.content)
-        if message.content.startswith("im") or message.content.startswith("Im") or message.content.startswith("I'm"):
+        if message.content.startswith("im "):
             msg = "hi,"
-            if message.content.startswith("I'm"):
-                msg += message.content[3:]
-            else:
-                msg += message.content[2:]
+            msg += message.content[2:]
             msg += ", im dad"
             await message.channel.send(msg)
+
+        #fishy fishy game
+        if bot.fish_game:
+
+            if (message.content).isnumeric():
+                if int(message.content) < bot.fish_in_belly:
+                    msg = "higher"
+                    bot.fish_score += 1
+                    await message.channel.send(msg)
+                elif int(message.content) > bot.fish_in_belly:
+                    msg = "lower"
+                    bot.fish_score += 1
+                    await message.channel.send(msg)
+                elif int(message.content) == bot.fish_in_belly:
+                    #add score to dictionary if it is high score
+                    high_score = min(int(key_words["high_score"][0]), bot.fish_score)
+                    if high_score == bot.fish_score:
+                        key_words["high_score"] = [bot.fish_score, str(message.author)]
+                        # add key word to a text file to save trained phrases even after bot stops running
+                        keyWords_file = open('keyWords.txt', "a")
+                        keyWords_file.write("\n")
+                        keyWords_file.write("high_score" + "=" + str(bot.fish_score) + "," + str(message.author))
+                        keyWords_file.close()
+
+                    color_code = 0xA6B609
+                    color_code += (len(bot.queueList)) * 435
+                    embedVar = discord.Embed(title="DING DING DING!!", color=color_code)
+                    answer = str(bot.fish_in_belly)
+                    answer += " fish in my belly"
+                    high_score_txt = "high score: "
+                    high_score_txt += key_words["high_score"][1]
+                    high_score_txt += "  guesses: "
+                    high_score_txt += str(key_words["high_score"][0])
+                    embedVar.add_field(name= answer, value= high_score_txt, inline=False)
+                    await message.channel.send(embed=embedVar)
+                    bot.fish_game = False
+
+
+
+
+        # rock paper scissor game
+        if bot.rock_pap_sci:
+            if message.content == "dog":
+                player_move = "dog"
+            elif message.content == "cat":
+                player_move = "cat"
+            elif message.content == "human":
+                player_move = "human"
+            else:
+                return
+            shuffle = random.randint(1, 3)
+            if shuffle == 1:
+                bot_move = "dog"
+            elif shuffle == 2:
+                bot_move = "cat"
+            elif shuffle == 3:
+                bot_move = "human"
+
+            await message.channel.send(bot_move)
+            if player_move == bot_move:
+                await message.channel.send("tie")
+            elif player_move < bot_move:
+                await message.channel.send("I WIN")
+            elif player_move > bot_move:
+                await message.channel.send("u win")
 
 
 
@@ -309,7 +459,6 @@ if __name__ == "__main__":
         elif bot.count % 20 == 0:
             await message.channel.send("meow")
         await bot.process_commands(message)
-
 
 
     #run bot
