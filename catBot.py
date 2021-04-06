@@ -10,7 +10,6 @@ import os
 import asyncio
 
 
-
 if not os.path.isfile("config.py"):
 	sys.exit("'config.py' not fvirtualenv venvound! Please add it and try again.")
 else:
@@ -24,18 +23,7 @@ bot = commands.Bot(command_prefix = config.prefix)
 # bot = commands.Bot(command_prefix = "!")
 
 
-
-
-
-
 if __name__ == "__main__":
-
-    delete mp3 that gets downloaded
-    for music_file in os.listdir("./"):
-         if music_file.endswith(".m4a") or music_file.endswith(".webm") or music_file.endswith(".mp3") or music_file.endswith(".mvk") or music_file.endswith(".part"):
-             os.remove(music_file)
-
-
 
     #dictionary of key words, has some default phrases, and more can be added with !train
     key_words = {"hello": "meeeellow",
@@ -60,8 +48,6 @@ if __name__ == "__main__":
                 val = word[1]
                 key_words[key] = val
 
-
-
     bot.time = time.time()
     bot.count = 0
     bot.feeling = ":)"
@@ -73,8 +59,7 @@ if __name__ == "__main__":
     @bot.event
     async def on_ready():
         print(f'{bot.user.name} has connected to Discord!')
-
-
+	
     @bot.event
     async def on_message(message):
         #don't reply to bots
@@ -97,7 +82,6 @@ if __name__ == "__main__":
         if bot.sleep > 0:
             bot.sleep -= int(duration//40)
         bot.time = time.time()
-
         # stays in bounds
         bot.eat = max(0, bot.eat)
         bot.groom = max(0, bot.groom)
@@ -107,8 +91,6 @@ if __name__ == "__main__":
         print("eat:", bot.eat)
         print("groom:", bot.groom)
         print("sleep:", bot.sleep)
-
-
         bot.energy = "DR.  CAT\t\t\t\t\t\t\t\t/ᐠ ̥  ̮  ̥ ᐟ\ ฅ \n\n"
         bot.energy += "feeling:         "
         if totalEnergy <= 0:
@@ -125,16 +107,12 @@ if __name__ == "__main__":
         bot.energy += bot.groom * bot.representation
         bot.energy += "\nsleep:   "
         bot.energy += bot.sleep * bot.representation
-
-
-
         #colors gradually change based on lives
         color_code = 0xA6E516
         for x in range(27-totalEnergy):
             color_code -= 1000
         embedVar = discord.Embed(title= bot.energy, color = color_code)
         await ctx.send(embed=embedVar)
-
 
     @bot.command(name='feed', help=':: you must feed the cat')
     async def feed(ctx):
@@ -166,7 +144,6 @@ if __name__ == "__main__":
             print("sleep:", bot.sleep)
             await ctx.send("Zzz")
 
-
     @bot.command(name='train', help=':: train cat new phrases, ex: !train good bye = meow, see ya! :)')
     async def train(ctx, *args):
         if len(args) == 0:
@@ -187,8 +164,6 @@ if __name__ == "__main__":
             keyWords_file.write("\n")
             keyWords_file.write(new_key + "=" + new_val)
             keyWords_file.close()
-
-
     bot.fish_game = False
     bot.rock_pap_sci = False
     bot.fish_score = 0
@@ -198,7 +173,6 @@ if __name__ == "__main__":
         #reset
         bot.fish_game = False
         bot.rock_pap_sci = False
-
         game_shuffle = 1
         if game_shuffle == 1:
             bot.fish_game = True
@@ -225,7 +199,6 @@ if __name__ == "__main__":
              """
             embedVar.add_field(name="guess how many fishy in my tummy", value=val, inline=False)
             await ctx.send(embed=embedVar)
-
         elif bot.rock_pap_sci == True:
             embedVar = discord.Embed(title="HUMAN CAT DOG... SHOOT!", color=0xA6)
             val = """:gun: 
@@ -240,11 +213,8 @@ if __name__ == "__main__":
             embedVar.add_field(name= val, value = "READY SET GO", inline=False)
             await ctx.send(embed=embedVar)
 
-
-
     #for playing audio from youtube
     youtube_dl.utils.bug_reports_message = lambda: ''
-
     ytdl_format_options = {
         'format': 'bestaudio/best',
         'restrictfilenames': True,
@@ -255,16 +225,13 @@ if __name__ == "__main__":
         'quiet': True,
         'no_warnings': True,
         'default_search': 'auto',
-        'source_address': '0.0.0.0'  # bind to ipv4 since ipv6 addresses cause issues sometimes
+        'source_address': '0.0.0.0' 
     }
 
     ffmpeg_options = {
         'options': '-vn'
     }
-
     ytdl = youtube_dl.YoutubeDL(ytdl_format_options)
-
-
     class YTDLSource(discord.PCMVolumeTransformer):
         def __init__(self, source, *, data, volume=0.5):
             super().__init__(source, volume)
@@ -282,22 +249,16 @@ if __name__ == "__main__":
             filename = data['title'] if stream else ytdl.prepare_filename(data)
             return filename
 
-
-
     # joins cat to voice
     @bot.command(name="join", help=":: call cat to join voice")
     async def join(ctx):
         channel = ctx.author.voice.channel
         await channel.connect()
 
-
     @bot.command(name="leave", help=":: force cat out of voice")
     async def leave(ctx):
         await ctx.voice_client.disconnect()
-
-
-
-
+	
     bot.queueList = []
     @bot.command(name='play', help=':: play song')
     async def play(ctx, *args):
@@ -337,15 +298,11 @@ if __name__ == "__main__":
                 filename = await YTDLSource.from_url(url, loop=bot.loop)
                 voice_channel.play(discord.FFmpegPCMAudio(executable="C:/Program Files/FFmpeg/bin/ffmpeg.exe", source=filename))
 
-
-
     @bot.command(name='clear', help=':: clears queue')
     async def clear(ctx):
         bot.queueList.clear()
         songstext = "queue is empty"
         await ctx.channel.send(songstext)
-
-
 
     @bot.command(name='stop', help=':: stops the song')
     async def stop(ctx):
@@ -353,9 +310,6 @@ if __name__ == "__main__":
         voice_client = ctx.message.guild.voice_client
         if voice_client.is_playing():
             await voice_client.stop()
-            # os.remove(bot.song_file)
-
-
 
     #events
     @bot.event
@@ -363,10 +317,8 @@ if __name__ == "__main__":
         #protect from messaging himself
         if message.author == bot.user or message.author.bot:
             return
-
         random.seed(datetime.now())
         randomNum = random.randrange(1, 10)
-
         if bot.count >= 100:
             bot.count = 0
         else:
@@ -386,7 +338,6 @@ if __name__ == "__main__":
 
         #fishy fishy game
         if bot.fish_game:
-
             if (message.content).isnumeric():
                 if int(message.content) < bot.fish_in_belly:
                     msg = "higher"
@@ -420,9 +371,6 @@ if __name__ == "__main__":
                     await message.channel.send(embed=embedVar)
                     bot.fish_game = False
 
-
-
-
         # rock paper scissor game
         if bot.rock_pap_sci:
             if message.content == "dog":
@@ -449,8 +397,6 @@ if __name__ == "__main__":
             elif player_move > bot_move:
                 await message.channel.send("u win")
 
-
-
         #randomly chimes into convo
         elif bot.count % 60 == 0:
             await message.channel.send("meow pay attention to me")
@@ -459,10 +405,8 @@ if __name__ == "__main__":
         elif bot.count % 20 == 0:
             await message.channel.send("meow")
         await bot.process_commands(message)
-
-
+	
     #run bot
     bot.run(TOKEN)
-
     # close text file
     keyWords_file.close()
