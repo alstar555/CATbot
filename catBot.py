@@ -9,7 +9,7 @@ import discord, sys
 # import os
 # import asyncio
 import discord
-print(discord.__version__)
+print("discord version: ", discord.__version__)
 
 # # TOKEN = config.TOKEN
 # # GUILD = config.GUILD
