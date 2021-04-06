@@ -1,4 +1,4 @@
-import discord, sys
+#import discord, sys
 # import os
 # from discord.ext import commands
 # import youtube_dl
