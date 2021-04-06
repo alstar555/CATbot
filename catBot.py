@@ -10,14 +10,9 @@ import os
 import asyncio
 
 
-if not os.path.isfile("config.py"):
-	sys.exit("'config.py' not fvirtualenv venvound! Please add it and try again.")
-else:
-	import config
-
 TOKEN = config.TOKEN
 GUILD = config.GUILD
-bot = commands.Bot(command_prefix = config.prefix)
+bot = commands.Bot(command_prefix = "!")
 # TOKEN = os.getenv("DISCORD_BOT_TOKEN")
 # GUILD = os.getenv("DISCORD_GUILD")
 # bot = commands.Bot(command_prefix = "!")
