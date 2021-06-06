@@ -42,7 +42,7 @@ cat must be taken care of in order for him not to loose his 9 lives
 
 # Requirements 
 * Python 
-* Dsicord.py library
+* Discord.py library
 * PyNaCl library
 
 # Set Up
